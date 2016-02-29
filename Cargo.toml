@@ -1,0 +1,6 @@
+[package]
+name = "ARGHH"
+version = "0.1.0"
+authors = ["John <jrobdikeman@gmail.com>"]
+
+[dependencies]
