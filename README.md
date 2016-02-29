@@ -7,12 +7,28 @@ ROADMAP
 =======
 
 :white_medium_square: output
+
 :white_medium_square: input
+
 :white_medium_square: pause
+
 :white_medium_square: dupe
+
 :white_medium_square: rand
+
 :white_medium_square: goto
+
 :white_medium_square: +, -, *, /, %
+
 :white_medium_square: <, >, ==, !=
+
 :white_medium_square: ?
+
 :white_medium_square: end
+
+:white_medium_square: alternate stacks
+
+:white_medium_square: methods
+
+
+
