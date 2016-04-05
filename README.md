@@ -6,7 +6,7 @@ ARGHH stands for ARGHH: A Rustic Step Implementation. it's an recursive onomatop
 ROADMAP
 =======
 
-:white_medium_square: output
+:white_check_mark: output
 
 :white_medium_square: input
 
@@ -16,19 +16,18 @@ ROADMAP
 
 :white_medium_square: rand
 
-:white_medium_square: goto
+:white_check_mark: goto
 
-:white_medium_square: +, -, *, /, %
+:white_check_mark: +, -, *, /, %
 
 :white_medium_square: <, >, ==, !=
 
 :white_medium_square: ?
 
-:white_medium_square: end
+:white_check_mark: end
 
 :white_medium_square: alternate stacks
 
+:white_medium_square: string operations
+
 :white_medium_square: methods
-
-
-
