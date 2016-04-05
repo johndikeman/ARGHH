@@ -18,14 +18,14 @@ fn main() {
     // this is a vector of string literals, not Strings
     let split: Vec<&str> = s.split_whitespace().collect();
 
-    interpret(&split);
+    interpret(split);
 }
 
-fn interpret<'a>(this: &'a Vec<&str>){
+fn interpret(this: Vec<&str>){
 
     let reserved_operators: Vec<&'static str> = vec!["pause","output", "input", "finput", "sto", "dupe" ,"+", "-", "/", "*", "%", "?", "goto", "end", "rand", ">", "<", "==", "!="];
 
-    let mut memory: HashMap<&'static str,Vec<&str>> = HashMap::new();
+    let mut memory: HashMap<&str,Vec<&str>> = HashMap::new();
     memory.insert("main",Vec::new());
 
     // println!("{:?}",this);
@@ -56,8 +56,33 @@ fn interpret<'a>(this: &'a Vec<&str>){
                     }
                     if !is_step{
                         //put all the other operator logic in here
-                        let peice: &'a str = this[ind];
-                        memory.get_mut("main").unwrap().push(&*peice);
+                        match this[ind] {
+                            "+" => {
+                                let mem = memory.get_mut("main").unwrap();
+                                let str_one: &str = mem
+                                    .pop()
+                                    .unwrap();
+                                let one: u32 = str_one
+                                    .trim()
+                                    .parse()
+                                    .expect("your argument to + wasn't a number!");
+                                let str_two: &str = mem
+                                    .pop()
+                                    .unwrap();
+                                let two: u32 = str_two
+                                    .trim()
+                                    .parse()
+                                    .expect("your argument to + wasn't a number!");
+                                let ret = one + two;
+                                mem.push(&*format!("{}",&ret));
+                            },
+
+                            _ => {
+                                // if it's none of the things
+                                let peice: &str = this[ind];
+                                memory.get_mut("main").unwrap().push(&*peice);
+                            }
+                        }
                     }
                 }
             }
