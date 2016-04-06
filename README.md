@@ -8,7 +8,7 @@ ROADMAP
 
 :white_check_mark: output
 
-:white_medium_square: input
+:white_check_mark: input
 
 :white_medium_square: pause
 

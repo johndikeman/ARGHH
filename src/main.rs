@@ -3,8 +3,18 @@
 use std::io::prelude::*;
 use std::fs::File;
 use std::collections::HashMap;
+use std::io;
 // use std::str::Chars;
 
+
+
+fn len(s: String) -> i64{
+    let mut count: i64 = 0;
+    for _ in s.chars() {
+        count += 1;
+    }
+    count
+}
 
 fn main() {
     let mut file = File::open("test.step")
@@ -278,6 +288,60 @@ fn interpret(this: Vec<&str>){
                                     let name = String::from(&*memory.get_mut(&current_memory).unwrap().pop().unwrap());
                                     memory.insert(name,Vec::new());
                                 },
+
+                                "input" => {
+                                    let mut line = String::new();
+                                    match io::stdin().read_line(&mut line) {
+                                        Ok(_) => {();},
+                                        Err(_) => {panic!("error reading from stdin!");}
+                                    }
+                                    memory.get_mut(&current_memory).unwrap().push(line);
+
+                                },
+
+                                "<" => {
+                                    // if there is an option that's a string, we're going to make it a number dammit
+                                    let val1 = String::from(memory.get_mut(&current_memory).unwrap().pop().unwrap());
+                                    let val2 = String::from(memory.get_mut(&current_memory).unwrap().pop().unwrap());
+                                    match (val1.parse::<i64>(), val2.parse::<i64>()) {
+                                        (Ok(x),Ok(y)) => {
+                                            if y < x {
+                                                memory.get_mut(&current_memory).unwrap().push(String::from("yea"));
+                                            }
+                                            else{
+                                                memory.get_mut(&current_memory).unwrap().push(String::from("nope"));
+                                            }
+                                        },
+                                        // they're trying to judge a number vs a string, then use the length of the string
+                                        (Err(_),Ok(y)) => {
+                                            if y < len(val1){
+                                                memory.get_mut(&current_memory).unwrap().push(String::from("yea"));
+                                            }
+                                            else{
+                                                memory.get_mut(&current_memory).unwrap().push(String::from("nope"));
+                                            }
+                                        },
+
+                                        (Ok(x),Err(_)) => {
+                                            if x < len(val2){
+                                                memory.get_mut(&current_memory).unwrap().push(String::from("yea"));
+                                            }
+                                            else{
+                                                memory.get_mut(&current_memory).unwrap().push(String::from("nope"));
+                                            }
+                                        },
+
+                                        (Err(_),Err(_)) => {
+                                            if len(val2) < len(val1){
+                                                memory.get_mut(&current_memory).unwrap().push(String::from("yea"));
+                                            }
+                                            else{
+                                                memory.get_mut(&current_memory).unwrap().push(String::from("nope"));
+                                            }
+                                        }
+                                    }
+                                    println!("{:?}",memory.get(&current_memory));
+                                }
 
                                 _ => {
                                     println!("pushed {:?} onto the stack {}",current_operator,current_memory);

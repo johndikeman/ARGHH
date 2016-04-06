@@ -1,1 +1,1 @@
-0. 1. 0 .1 spawn .0 4. 2. switch .2 .4 3. 550000 main .3 5. 0 main swap-> output .5 
+0. 4 input < .0
