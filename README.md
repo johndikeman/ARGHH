@@ -12,7 +12,7 @@ ROADMAP
 
 :white_medium_square: pause
 
-:white_medium_square: dupe
+:white_check_mark: dupe
 
 :white_medium_square: rand
 
@@ -22,12 +22,16 @@ ROADMAP
 
 :white_medium_square: <, >, ==, !=
 
-:white_medium_square: ?
+:white_check_mark: ?
 
 :white_check_mark: end
 
-:white_medium_square: alternate stacks
+:white_check_mark: alternate stacks
 
 :white_medium_square: string operations
 
 :white_medium_square: methods
+
+:white_medium_square: tests
+
+:white_medium_square: kind types:kissing_heart:

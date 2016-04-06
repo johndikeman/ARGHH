@@ -23,7 +23,7 @@ fn main() {
 
 fn interpret(this: Vec<&str>){
 
-    let reserved_operators: Vec<&'static str> = vec!["pause","output", "input", "finput", "sto", "dupe" ,"+", "-", "/", "*", "%", "?", "goto", "end", "rand", ">", "<", "==", "!="];
+    // let reserved_operators: Vec<&'static str> = vec!["pause","output", "input", "finput", "sto", "dupe" ,"+", "-", "/", "*", "%", "?", "goto", "end", "rand", ">", "<", "==", "!="];
     // we have to use Strings becuase otherwise the borrowing gets all hosed
     let mut memory: HashMap<String,Vec<String>> = HashMap::new();
     memory.insert(String::from("main"),Vec::new());
@@ -57,136 +57,232 @@ fn interpret(this: Vec<&str>){
                         }
                     }
                     if !is_step {
-                        //put all the other operator logic in here
-                        match this[ind] {
-                            "+" => {
-                                let mem = memory.get_mut(&current_memory).unwrap();
-                                let str_one: String = mem
-                                    .pop()
-                                    .unwrap();
-                                let one: i32 = str_one
-                                    .trim()
-                                    .parse()
-                                    .expect("your argument to + wasn't a number!");
-                                let str_two: String = mem
-                                    .pop()
-                                    .unwrap();
-                                let two: i32 = str_two
-                                    .trim()
-                                    .parse()
-                                    .expect("your argument to + wasn't a number!");
-                                let ret = one + two;
-                                let res = String::from(&*format!("{}",ret));
-                                mem.push(res);
-                            },
+                        // put all the other operator logic in here
+                        let res = this[ind].find("?");
+                        let mut current_operator = String::from(this[ind]);
+                        match res{
+                            Some(x) => {current_operator.remove(x);},
+                            _ => {();}
+                        }
+                        // doing some shady shit with short circuiting here nbd
+                        if((res != None && memory.get_mut(&current_memory).unwrap().pop().unwrap() == "yea") || res == None)  {
+                            match &*current_operator {
+                                "+" => {
+                                    let mem = memory.get_mut(&current_memory).unwrap();
+                                    let str_one: String = mem
+                                        .pop()
+                                        .unwrap();
+                                    let one: i32 = str_one
+                                        .trim()
+                                        .parse()
+                                        .expect("your argument to + wasn't a number!");
+                                    let str_two: String = mem
+                                        .pop()
+                                        .unwrap();
+                                    let two: i32 = str_two
+                                        .trim()
+                                        .parse()
+                                        .expect("your argument to + wasn't a number!");
+                                    let ret = one + two;
+                                    let res = String::from(&*format!("{}",ret));
+                                    mem.push(res);
+                                },
 
-                            "-" => {
-                                let mem = memory.get_mut(&current_memory).unwrap();
-                                let str_one: String = mem
-                                    .pop()
-                                    .unwrap();
-                                let one: i32 = str_one
-                                    .trim()
-                                    .parse()
-                                    .expect("your argument to + wasn't a number!");
-                                let str_two: String = mem
-                                    .pop()
-                                    .unwrap();
-                                let two: i32 = str_two
-                                    .trim()
-                                    .parse()
-                                    .expect("your argument to + wasn't a number!");
-                                let ret = one - two;
-                                let res = String::from(&*format!("{}",ret));
-                                mem.push(res);
-                            },
+                                "-" => {
+                                    let mem = memory.get_mut(&current_memory).unwrap();
+                                    let str_one: String = mem
+                                        .pop()
+                                        .unwrap();
+                                    let one: i32 = str_one
+                                        .trim()
+                                        .parse()
+                                        .expect("your argument to + wasn't a number!");
+                                    let str_two: String = mem
+                                        .pop()
+                                        .unwrap();
+                                    let two: i32 = str_two
+                                        .trim()
+                                        .parse()
+                                        .expect("your argument to + wasn't a number!");
+                                    let ret = one - two;
+                                    let res = String::from(&*format!("{}",ret));
+                                    mem.push(res);
+                                },
 
-                            "/" => {
-                                let mem = memory.get_mut(&current_memory).unwrap();
-                                let str_one: String = mem
-                                    .pop()
-                                    .unwrap();
-                                let one: i32 = str_one
-                                    .trim()
-                                    .parse()
-                                    .expect("your argument to + wasn't a number!");
-                                let str_two: String = mem
-                                    .pop()
-                                    .unwrap();
-                                let two: i32 = str_two
-                                    .trim()
-                                    .parse()
-                                    .expect("your argument to + wasn't a number!");
-                                let ret = one / two;
-                                let res = String::from(&*format!("{}",ret));
-                                mem.push(res);
-                            },
+                                "/" => {
+                                    let mem = memory.get_mut(&current_memory).unwrap();
+                                    let str_one: String = mem
+                                        .pop()
+                                        .unwrap();
+                                    let one: i32 = str_one
+                                        .trim()
+                                        .parse()
+                                        .expect("your argument to + wasn't a number!");
+                                    let str_two: String = mem
+                                        .pop()
+                                        .unwrap();
+                                    let two: i32 = str_two
+                                        .trim()
+                                        .parse()
+                                        .expect("your argument to + wasn't a number!");
+                                    let ret = one / two;
+                                    let res = String::from(&*format!("{}",ret));
+                                    mem.push(res);
+                                },
 
-                            "*" => {
-                                let mem = memory.get_mut(&current_memory).unwrap();
-                                let str_one: String = mem
-                                    .pop()
-                                    .unwrap();
-                                let one: i32 = str_one
-                                    .trim()
-                                    .parse()
-                                    .expect("your argument to + wasn't a number!");
-                                let str_two: String = mem
-                                    .pop()
-                                    .unwrap();
-                                let two: i32 = str_two
-                                    .trim()
-                                    .parse()
-                                    .expect("your argument to + wasn't a number!");
-                                let ret = one * two;
-                                let res = String::from(&*format!("{}",ret));
-                                mem.push(res);
-                            },
+                                "*" => {
+                                    let mem = memory.get_mut(&current_memory).unwrap();
+                                    let str_one: String = mem
+                                        .pop()
+                                        .unwrap();
+                                    let one: i32 = str_one
+                                        .trim()
+                                        .parse()
+                                        .expect("your argument to + wasn't a number!");
+                                    let str_two: String = mem
+                                        .pop()
+                                        .unwrap();
+                                    let two: i32 = str_two
+                                        .trim()
+                                        .parse()
+                                        .expect("your argument to + wasn't a number!");
+                                    let ret = one * two;
+                                    let res = String::from(&*format!("{}",ret));
+                                    mem.push(res);
+                                },
 
-                            "%" => {
-                                let mem = memory.get_mut(&current_memory).unwrap();
-                                let str_one: String = mem
-                                    .pop()
-                                    .unwrap();
-                                let one: i32 = str_one
-                                    .trim()
-                                    .parse()
-                                    .expect("your argument to + wasn't a number!");
-                                let str_two: String = mem
-                                    .pop()
-                                    .unwrap();
-                                let two: i32 = str_two
-                                    .trim()
-                                    .parse()
-                                    .expect("your argument to + wasn't a number!");
-                                let ret = one % two;
-                                let res = String::from(&*format!("{}",ret));
-                                mem.push(res);
-                            },
+                                "%" => {
+                                    let mem = memory.get_mut(&current_memory).unwrap();
+                                    let str_one: String = mem
+                                        .pop()
+                                        .unwrap();
+                                    let one: i32 = str_one
+                                        .trim()
+                                        .parse()
+                                        .expect("your argument to + wasn't a number!");
+                                    let str_two: String = mem
+                                        .pop()
+                                        .unwrap();
+                                    let two: i32 = str_two
+                                        .trim()
+                                        .parse()
+                                        .expect("your argument to + wasn't a number!");
+                                    let ret = one % two;
+                                    let res = String::from(&*format!("{}",ret));
+                                    mem.push(res);
+                                },
 
-                            "output" => {
-                                let mem = memory.get_mut(&current_memory).unwrap();
-                                let thing = mem.pop().unwrap();
-                                println!("{:?}",thing);
-                            },
+                                "output" => {
+                                    let mem = memory.get_mut(&current_memory).unwrap();
+                                    let thing = mem.pop().unwrap();
+                                    println!("{:?}",thing);
+                                },
 
-                            "goto" => {
-                                println!("at the goto op! {:?}",memory[&current_memory]);
+                                "goto" => {
+                                    println!("at the goto op! {:?}",memory[&current_memory]);
 
-                                let mem = memory.get_mut(&current_memory).unwrap();
-                                let ind: i64 = mem.pop().unwrap().parse().expect(&*format!("your argument to goto on operation {} was not an integer!",count));
-                                // just subtract one so that when one is added its a okay
-                                count = ind - 1;
-                            },
+                                    let mem = memory.get_mut(&current_memory).unwrap();
+                                    let ind: i64 = mem.pop()
+                                        .unwrap()
+                                        .parse()
+                                        .expect(&*format!("your argument to goto on operation {} was not an integer!",count));
+                                    // just subtract one so that when one is added its a okay
+                                    count = ind - 1;
+                                },
 
-                            "end" => {
-                                break 'top;
-                            },
+                                "end" => {
+                                    break 'top;
+                                },
 
-                            _ => {
-                                println!("pushed {:?} onto the stack",this[ind]);
-                                let peice: &str = this[ind];
-                                memory.get_mut("main").unwrap().push(String::from(&*peice));
+                                "dupe" => {
+                                    let mem = memory.get_mut(&current_memory).unwrap();
+                                    let val: &str = &*mem.pop().unwrap();
+                                    mem.push(String::from(val));
+                                    mem.push(String::from(val));
+                                },
+
+                                "swap<-" => {
+                                    let first_mem_name = String::from(memory
+                                        .get_mut(&current_memory)
+                                        .unwrap()
+                                        .pop()
+                                        .unwrap());
+                                    let second_mem_name = String::from(memory
+                                        .get_mut(&current_memory)
+                                        .unwrap()
+                                        .pop()
+                                        .unwrap());
+                                    let val = memory
+                                        .get_mut(&first_mem_name)
+                                        .unwrap()
+                                        .pop()
+                                        .unwrap();
+                                    memory
+                                        .get_mut(&second_mem_name)
+                                        .unwrap()
+                                        .push(
+                                            String::from(
+                                                    val
+                                                )
+                                            );
+                                },
+                                // this is the same thing, just going the opposite direction
+                                "swap->" => {
+                                    println!("swapping!");
+                                    let second_mem_name = String::from(memory
+                                        .get_mut(&current_memory)
+                                        .unwrap()
+                                        .pop()
+                                        .unwrap());
+                                    let first_mem_name = String::from(memory
+                                        .get_mut(&current_memory)
+                                        .unwrap()
+                                        .pop()
+                                        .unwrap());
+                                    let val = memory
+                                        .get_mut(&first_mem_name)
+                                        .unwrap()
+                                        .pop()
+                                        .unwrap();
+                                    memory
+                                        .get_mut(&second_mem_name)
+                                        .unwrap()
+                                        .push(
+                                            String::from(
+                                                    val
+                                                )
+                                            );
+                                },
+
+                                "switch" => {
+                                    println!("switching!");
+                                    println!("contents of stack {}:{:?}",current_memory,memory.get_mut(&current_memory).unwrap());
+                                    let new = String::from(&*memory.get_mut(&current_memory).unwrap().pop().unwrap());
+                                    let mut possible = false;
+                                    for a in memory.keys(){
+                                        if a == &new{
+                                            possible = true;
+                                            break;
+                                        }
+                                    }
+
+                                    if possible {
+                                        current_memory = new;
+                                    }
+                                    else{
+                                        panic!(format!("the alternate stack you specified, {}, doesn't exist! spawn it first.",new));
+                                    }
+                                },
+
+                                "spawn" => {
+                                    let name = String::from(&*memory.get_mut(&current_memory).unwrap().pop().unwrap());
+                                    memory.insert(name,Vec::new());
+                                },
+
+                                _ => {
+                                    println!("pushed {:?} onto the stack {}",current_operator,current_memory);
+                                    memory.get_mut(&current_memory).unwrap().push(String::from(current_operator));
+                                }
                             }
                         }
                     }
@@ -194,6 +290,6 @@ fn interpret(this: Vec<&str>){
             }
         }
         count += 1;
-        println!("{:?}",memory["main"]);
+        // println!("{:?}",memory["main"]);
     }
 }

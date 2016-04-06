@@ -1,1 +1,1 @@
-0. 1 2 + 1. 5 * .1 .0 2. 5 / .2 3. output 0 stop goto .3
+0. 1. 0 .1 spawn .0 4. 2. switch .2 .4 3. 550000 main .3 5. 0 main swap-> output .5 
