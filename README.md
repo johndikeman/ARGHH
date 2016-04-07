@@ -1,7 +1,7 @@
 ARGHH
 =====
 
-ARGHH stands for ARGHH: A Rustic Step Implementation. it's an recursive onomatopoeic backronym, becuase it's the noise that you make when you read what it stands for.
+ARGHH stands for ARGHH: A Rustic Step Implementation. it's an recursive onomatopoeic backronym, because it's the noise that you make when you read what it stands for.
 
 ROADMAP
 =======
@@ -20,7 +20,7 @@ ROADMAP
 
 :white_check_mark: +, -, *, /, %
 
-:white_medium_square: <, >, ==, !=
+:white_check_mark: <, >, ==, !
 
 :white_check_mark: ?
 
