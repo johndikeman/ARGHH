@@ -211,7 +211,7 @@ fn interpret(this: Vec<&str>){
                                     mem.push(String::from(val));
                                 },
 
-                                "swap<-" => {
+                                "<=" => {
                                     let first_mem_name = String::from(memory
                                         .get_mut(&current_memory)
                                         .unwrap()
@@ -237,7 +237,7 @@ fn interpret(this: Vec<&str>){
                                             );
                                 },
                                 // this is the same thing, just going the opposite direction
-                                "swap->" => {
+                                "=>" => {
                                     println!("swapping!");
                                     let second_mem_name = String::from(memory
                                         .get_mut(&current_memory)
@@ -300,9 +300,54 @@ fn interpret(this: Vec<&str>){
                                 },
 
                                 "<" => {
+                                    let mem_borrow = memory.get_mut(&current_memory).unwrap();
                                     // if there is an option that's a string, we're going to make it a number dammit
-                                    let val1 = String::from(memory.get_mut(&current_memory).unwrap().pop().unwrap());
+                                    let val1 = String::from(mem_borrow.pop().unwrap());
+                                    let val2 = String::from(mem_borrow.pop().unwrap());
+                                    match (val1.parse::<i64>(), val2.parse::<i64>()) {
+                                        (Ok(x),Ok(y)) => {
+                                            if y < x {
+                                                mem_borrow.push(String::from("yea"));
+                                            }
+                                            else{
+                                                mem_borrow.push(String::from("nope"));
+                                            }
+                                        },
+                                        // they're trying to judge a number vs a string, then use the length of the string
+                                        (Err(_),Ok(y)) => {
+                                            if y < len(val1){
+                                                mem_borrow.push(String::from("yea"));
+                                            }
+                                            else{
+                                                mem_borrow.push(String::from("nope"));
+                                            }
+                                        },
+
+                                        (Ok(x),Err(_)) => {
+                                            if x < len(val2){
+                                                mem_borrow.push(String::from("yea"));
+                                            }
+                                            else{
+                                                mem_borrow.push(String::from("nope"));
+                                            }
+                                        },
+
+                                        (Err(_),Err(_)) => {
+                                            if len(val2) < len(val1){
+                                                mem_borrow.push(String::from("yea"));
+                                            }
+                                            else{
+                                                mem_borrow.push(String::from("nope"));
+                                            }
+                                        }
+                                    }
+                                    println!("{:?}",memory.get(&current_memory));
+                                },
+
+                                ">" => {
+                                    // if there is an option that's a string, we're going to make it a number dammit
                                     let val2 = String::from(memory.get_mut(&current_memory).unwrap().pop().unwrap());
+                                    let val1 = String::from(memory.get_mut(&current_memory).unwrap().pop().unwrap());
                                     match (val1.parse::<i64>(), val2.parse::<i64>()) {
                                         (Ok(x),Ok(y)) => {
                                             if y < x {
@@ -341,7 +386,11 @@ fn interpret(this: Vec<&str>){
                                         }
                                     }
                                     println!("{:?}",memory.get(&current_memory));
-                                }
+                                },
+
+                                // "=" =>{
+                                //     let val1 = String::from(memory.get)
+                                // },
 
                                 _ => {
                                     println!("pushed {:?} onto the stack {}",current_operator,current_memory);
