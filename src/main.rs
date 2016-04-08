@@ -17,7 +17,7 @@ fn main() {
     // s = s.strip();
 
     // self.functions[function_name] is a vector of string literals, not Strings
-    let interpreter = Ob::new(s);
+    let mut interpreter = Ob::new(s);
     interpreter.interpret(String::from("main"));
 }
 
@@ -29,15 +29,15 @@ fn len(s: String) -> i64{
     count
 }
 
-struct Ob {
-    memory: HashMap<String,Vec<String>>,
+struct Ob<'a> {
+    memory: &'a mut HashMap<String,Vec<String>>,
     contents: String,
-    functions: HashMap<String,Vec<String>>
+    functions: &'a mut HashMap<String,Vec<String>>
 }
 
-impl Ob {
-    pub fn new(c:String) -> Ob {
-        let mut f: HashMap<String,Vec<String>> = HashMap::new();
+impl<'a> Ob<'a> {
+    pub fn new(c:String) -> Ob<'a> {
+        let f: &mut HashMap<String,Vec<String>> = &mut HashMap::new();
         for function in c.split("#") {
             let n = function.split_whitespace().collect::<Vec<&str>>();
             let name: &str = n[0];
@@ -46,10 +46,13 @@ impl Ob {
                 .map(|s| String::from(s)).collect()); // convert from Vec<&str> to Vec<String>
         }
 
-        Ob{ memory: HashMap::new().insert(String::from("main"), Vec::new()), contents: c, functions: f}
+        let me = &mut HashMap::new();
+        me.insert(String::from("main"), Vec::new());
+
+        Ob{ memory: me, contents: c, functions: f}
     }
 
-    fn interpret(&self,function_name: String){
+    pub fn interpret(&mut self,function_name: String){
         // let reserved_operators: Vec<&'static str> = vec!["pause","output", "input", "finput", "sto", "dupe" ,"+", "-", "/", "*", "%", "?", "goto", "end", "rand", ">", "<", "==", "!="];
         // we have to use Strings becuase otherwise the borrowing gets all hosed
         // self.memory.insert(String::from("main"),Vec::new());
@@ -60,9 +63,9 @@ impl Ob {
         // println!("{}","blah" == String::from("blah"));
         let mut count: i64 = 0;
         'top: loop{
-            let start_ind = self.functions[function_name].iter().position(|&x| x.trim() == format!("{}.",count));
+            let start_ind = self.functions[&function_name].iter().position(|ref x| x.trim() == format!("{}.",count));
             // println!("{:?}",start_ind);
-            let finish_ind = self.functions[function_name].iter().position(|&x| x.trim() == format!(".{}",count));
+            let finish_ind = self.functions[&function_name].iter().position(|ref x| x.trim() == format!(".{}",count));
             // println!("{:?}",finish_ind);
 
 
@@ -74,7 +77,7 @@ impl Ob {
                 (Some(_),Some(_)) => {
                     for ind in start_ind.unwrap()..finish_ind.unwrap() + 1 { // you have to unwrap these because they're Some(thing)
                         let mut is_step: bool = false;
-                        for ch in self.functions[function_name][ind].chars(){
+                        for ch in self.functions[&function_name][ind].chars(){
                             // iterate through all the characters in the word and see if theyre a period
                             if ch == '.' {
                                 // println!("got a number!");
@@ -84,8 +87,8 @@ impl Ob {
                         }
                         if !is_step {
                             // put all the other operator logic in here
-                            let res = self.functions[function_name][ind].find("?");
-                            let mut current_operator = String::from(self.functions[function_name][ind]);
+                            let res = self.functions[&function_name][ind].find("?");
+                            let mut current_operator = String::from(self.functions[&function_name][ind]);
                             match res{
                                 Some(x) => {current_operator.remove(x);},
                                 _ => {();}
