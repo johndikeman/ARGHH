@@ -18,6 +18,7 @@ fn main() {
 
     // self.functions[function_name] is a vector of string literals, not Strings
     let mut interpreter = Ob::new(s);
+    interpreter.populate();
     interpreter.interpret(String::from("main"));
 }
 
@@ -29,34 +30,50 @@ fn len(s: String) -> i64{
     count
 }
 
-struct Ob<'a> {
-    memory: &'a mut HashMap<String,Vec<String>>,
+struct Ob{
+    memory: HashMap<String,Vec<String>>,
     contents: String,
-    functions: &'a mut HashMap<String,Vec<String>>
+    functions: HashMap<String,Vec<String>>
 }
 
-impl<'a> Ob<'a> {
-    pub fn new(c:String) -> Ob<'a> {
-        let f: &mut HashMap<String,Vec<String>> = &mut HashMap::new();
-        for function in c.split("#") {
-            let n = function.split_whitespace().collect::<Vec<&str>>();
-            let name: &str = n[0];
-            f.insert(String::from(name),
-                function.split_whitespace()
-                .map(|s| String::from(s)).collect()); // convert from Vec<&str> to Vec<String>
-        }
-
-        let me = &mut HashMap::new();
-        me.insert(String::from("main"), Vec::new());
-
-        Ob{ memory: me, contents: c, functions: f}
+impl Ob {
+    pub fn new(c:String) -> Ob {
+        let mem: HashMap<String,Vec<String>> = HashMap::new();
+        Ob{ memory: HashMap::new(), contents: c, functions: mem}
     }
 
-    pub fn interpret(&mut self,function_name: String){
+    pub fn set(&mut self, memory: HashMap<String,Vec<String>>,functions: HashMap<String,Vec<String>>){
+        self.memory = memory;
+        self.functions = functions;
+    }
+
+    pub fn ret(&mut self) -> (HashMap<String,Vec<String>>,HashMap<String,Vec<String>>) {
+        (self.memory, self.functions)
+    }
+
+    pub fn populate(&mut self) {
+        println!("here");
+        println!("{}",self.contents);
+        println!("{:?}",self.contents.split("#").collect::<Vec<&str>>());
+        // let f: &mut HashMap<String,Vec<String>> = &mut HashMap::new();
+        for function in self.contents.split("#") {
+            println!("{}",function);
+            if function != "" && function != " "{
+                let n = function.split_whitespace().collect::<Vec<&str>>();
+                let name: &str = n[0];
+                self.functions.insert(String::from(name),
+                    function.split_whitespace()
+                    .map(|s| String::from(s)).collect()); // convert from Vec<&str> to Vec<String>
+            }
+        }
+
+        self.memory.insert(String::from("main"), Vec::new());
+    }
+
+    pub fn interpret(&mut self, function_name: String){
         // let reserved_operators: Vec<&'static str> = vec!["pause","output", "input", "finput", "sto", "dupe" ,"+", "-", "/", "*", "%", "?", "goto", "end", "rand", ">", "<", "==", "!="];
         // we have to use Strings becuase otherwise the borrowing gets all hosed
         // self.memory.insert(String::from("main"),Vec::new());
-
         let mut current_memory = String::from("main");
 
         // println!("{:?}",self.functions[function_name]);
@@ -88,7 +105,7 @@ impl<'a> Ob<'a> {
                         if !is_step {
                             // put all the other operator logic in here
                             let res = self.functions[&function_name][ind].find("?");
-                            let mut current_operator = String::from(self.functions[&function_name][ind]);
+                            let mut current_operator = String::from(self.functions[&function_name][ind].clone());
                             match res{
                                 Some(x) => {current_operator.remove(x);},
                                 _ => {();}
@@ -96,6 +113,17 @@ impl<'a> Ob<'a> {
                             // doing some shady shit with short circuiting here nbd
                             if (res != None && self.memory.get_mut(&current_memory).unwrap().pop().unwrap() == "yea") || res == None  {
                                 match &*current_operator {
+                                    "!#" => {
+                                        let mem = self.memory.get_mut(&current_memory).unwrap();
+                                        let method = String::from(mem.pop().unwrap());
+                                        let mut metainterpreter = Ob::new(String::new());
+                                        metainterpreter.set(self.memory,self.functions);
+                                        metainterpreter.interpret(method);
+                                        let (n,o) = metainterpreter.ret();
+
+                                        self.set(n,o);
+                                    },
+
                                     "+" => {
                                         let mem = self.memory.get_mut(&current_memory).unwrap();
                                         let str_one: String = mem
@@ -475,6 +503,5 @@ impl<'a> Ob<'a> {
             count += 1;
             // println!("{:?}",self.memory["main"]);
         }
-
     }
 }
