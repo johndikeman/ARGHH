@@ -30,7 +30,9 @@ ROADMAP
 
 :white_medium_square: string operations
 
-:white_medium_square: methods
+:white_medium_square: importing files
+
+:white_check_mark: methods
 
 :white_medium_square: tests
 

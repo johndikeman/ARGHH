@@ -18,8 +18,11 @@ fn main() {
 
     // self.functions[function_name] is a vector of string literals, not Strings
     let mut interpreter = Ob::new(s);
+    // change this line if you want/don't want debug messages!
+    interpreter.set_verbosity(false);
     interpreter.populate();
     interpreter.interpret(String::from("main"));
+
 }
 
 fn len(s: String) -> i64{
@@ -33,13 +36,18 @@ fn len(s: String) -> i64{
 struct Ob{
     memory: HashMap<String,Vec<String>>,
     contents: String,
-    functions: HashMap<String,Vec<String>>
+    functions: HashMap<String,Vec<String>>,
+    verbose: bool
 }
 
 impl Ob {
     pub fn new(c:String) -> Ob {
         let mem: HashMap<String,Vec<String>> = HashMap::new();
-        Ob{ memory: HashMap::new(), contents: c, functions: mem}
+        Ob{ memory: HashMap::new(), contents: c, functions: mem, verbose:true}
+    }
+
+    pub fn set_verbosity(&mut self, maybe:bool) {
+        self.verbose = maybe;
     }
 
     pub fn set(&mut self, memory: HashMap<String,Vec<String>>,functions: HashMap<String,Vec<String>>){
@@ -48,16 +56,15 @@ impl Ob {
     }
 
     pub fn ret(&mut self) -> (HashMap<String,Vec<String>>,HashMap<String,Vec<String>>) {
-        (self.memory, self.functions)
+        (self.memory.clone(), self.functions.clone())
     }
 
     pub fn populate(&mut self) {
-        println!("here");
-        println!("{}",self.contents);
-        println!("{:?}",self.contents.split("#").collect::<Vec<&str>>());
+        if self.verbose {println!("DEBUG:{}",self.contents)}
+        if self.verbose {println!("DEBUG:{:?}",self.contents.split("#").collect::<Vec<&str>>())}
         // let f: &mut HashMap<String,Vec<String>> = &mut HashMap::new();
         for function in self.contents.split("#") {
-            println!("{}",function);
+            if self.verbose {println!("DEBUG:{}",function)}
             if function != "" && function != " "{
                 let n = function.split_whitespace().collect::<Vec<&str>>();
                 let name: &str = n[0];
@@ -71,6 +78,7 @@ impl Ob {
     }
 
     pub fn interpret(&mut self, function_name: String){
+        // println!("{}",self.verbose);
         // let reserved_operators: Vec<&'static str> = vec!["pause","output", "input", "finput", "sto", "dupe" ,"+", "-", "/", "*", "%", "?", "goto", "end", "rand", ">", "<", "==", "!="];
         // we have to use Strings becuase otherwise the borrowing gets all hosed
         // self.memory.insert(String::from("main"),Vec::new());
@@ -113,11 +121,11 @@ impl Ob {
                             // doing some shady shit with short circuiting here nbd
                             if (res != None && self.memory.get_mut(&current_memory).unwrap().pop().unwrap() == "yea") || res == None  {
                                 match &*current_operator {
-                                    "!#" => {
-                                        let mem = self.memory.get_mut(&current_memory).unwrap();
-                                        let method = String::from(mem.pop().unwrap());
+                                    "!!" => {
+                                        let method = String::from(self.memory.get_mut(&current_memory).unwrap().pop().unwrap());
                                         let mut metainterpreter = Ob::new(String::new());
-                                        metainterpreter.set(self.memory,self.functions);
+                                        metainterpreter.set(self.memory.clone(),self.functions.clone());
+                                        metainterpreter.set_verbosity(self.verbose);
                                         metainterpreter.interpret(method);
                                         let (n,o) = metainterpreter.ret();
 
@@ -236,7 +244,8 @@ impl Ob {
                                     },
 
                                     "goto" => {
-                                        println!("at the goto op! {:?}",self.memory[&current_memory]);
+
+                                        if self.verbose {println!("DEBUG:at the goto op! {:?}",self.memory[&current_memory])};
 
                                         let mem = self.memory.get_mut(&current_memory).unwrap();
                                         let ind: i64 = mem.pop()
@@ -285,7 +294,7 @@ impl Ob {
                                     },
                                     // self.functions[function_name] is the same thing, just going the opposite direction
                                     "=>" => {
-                                        println!("swapping!");
+
                                         let second_mem_name = String::from(self.memory
                                             .get_mut(&current_memory)
                                             .unwrap()
@@ -301,6 +310,7 @@ impl Ob {
                                             .unwrap()
                                             .pop()
                                             .unwrap();
+                                        if self.verbose {println!("DEBUG:swapping value {} from stack {} to stack {}",val,first_mem_name,second_mem_name)};
                                         self.memory
                                             .get_mut(&second_mem_name)
                                             .unwrap()
@@ -309,11 +319,12 @@ impl Ob {
                                                         val
                                                     )
                                                 );
+
                                     },
 
                                     "switch" => {
-                                        println!("switching!");
-                                        println!("contents of stack {}:{:?}",current_memory,self.memory.get_mut(&current_memory).unwrap());
+                                        if self.verbose {println!("DEBUG:switching!")};
+                                        if self.verbose {println!("DEBUG:contents of stack {}:{:?}",current_memory,self.memory.get_mut(&current_memory).unwrap())};
                                         let new = String::from(&*self.memory.get_mut(&current_memory).unwrap().pop().unwrap());
                                         let mut possible = false;
                                         for a in self.memory.keys(){
@@ -333,6 +344,7 @@ impl Ob {
 
                                     "spawn" => {
                                         let name = String::from(&*self.memory.get_mut(&current_memory).unwrap().pop().unwrap());
+                                        current_memory = name.clone();
                                         self.memory.insert(name,Vec::new());
                                     },
 
@@ -387,7 +399,7 @@ impl Ob {
                                                 }
                                             }
                                         }
-                                        println!("{:?}",self.memory.get(&current_memory));
+                                        if self.verbose {println!("DEBUG:{:?}",self.memory.get(&current_memory))};
                                     },
 
                                     ">" => {
@@ -431,7 +443,7 @@ impl Ob {
                                                 }
                                             }
                                         }
-                                        println!("{:?}",self.memory.get(&current_memory));
+                                        if self.verbose {println!("DEBUG:{:?}",self.memory.get(&current_memory))};
                                     },
 
                                     "==" =>{
@@ -491,7 +503,7 @@ impl Ob {
                                     }
 
                                     _ => {
-                                        println!("pushed {:?} onto the stack {}",current_operator,current_memory);
+                                        if self.verbose {println!("DEBUG:pushed {:?} onto the stack {}",current_operator,current_memory)};
                                         self.memory.get_mut(&current_memory).unwrap().push(String::from(current_operator));
                                     }
                                 }
