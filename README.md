@@ -79,6 +79,34 @@ this code makes a new stack called `newstack`, pushes 0 onto it, then moves the 
 ### <=
 This is called a failed shovel, and it does the same thing as the ruined peasant home, just backwards.
 
+### input
+This operator will read a line from stdin and push it to the stack.
+
+### <
+This is called a confused seagull, and it will push "yea" onto the stack if the top operator is greater than the second from the top operator and will push "nope" if it isn't. These operators will work with numbers and strings interchangably- the value that is compared when you're using a string is the length of the string.
+
+### >
+This is called a really bad arrowhead, and it does the same thing as the confused seagull- just backwards.
+
+### ==
+This is called a cracked lip, and it will push "yea" onto the stack if the top values equal each other. This handles strings in the same way as the confused seagull and really bad arrowhead, except if you try to compare two strings the comparison will be based on the actual value, not just the length.
+
+### !
+This is called a surprise, and it will push "yea" onto the stack if the top value is "nope" and vice versa.
+
+### !!
+This is called either a wingzing or a special surprise, and it will pop a value from the stack and invoke the method of that name, if there is one. If there isn't one, you'd better have the funeral arrangements ready for your program. example:
+
+`# other_method 0. other output .0 # main 0. other_method !! .0`
+
+This code prints "other". Since method definitions are handled before the other operators, methods can be defined in any order and be called from anywhere in the program.
+
+### ?
+This is called a curlyfry, and it's a special operator in ARGHH. You can stick it with any operator, and that operator will only be run if the value popped from the stack is "yea". example:
+
+`# main 0. balls yea ?output .0`
+
+this program prints "balls". How vulgar.
 
 
 
