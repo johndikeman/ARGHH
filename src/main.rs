@@ -382,7 +382,7 @@ impl Ob {
                                             },
 
                                             (Ok(x),Err(_)) => {
-                                                if x < len(val2){
+                                                if x > len(val2){
                                                     self.memory.get_mut(&current_memory).unwrap().push(String::from("yea"));
                                                 }
                                                 else{
@@ -426,7 +426,7 @@ impl Ob {
                                             },
 
                                             (Ok(x),Err(_)) => {
-                                                if x < len(val2){
+                                                if x > len(val2){
                                                     self.memory.get_mut(&current_memory).unwrap().push(String::from("yea"));
                                                 }
                                                 else{
@@ -516,4 +516,72 @@ impl Ob {
             // println!("{:?}",self.memory["main"]);
         }
     }
+}
+
+#[test]
+fn test_swaps() {
+    let mut new = Ob::new(String::from("# main 0. other spawn 0 other 1. main .1 => .0 2. switch .2"));
+    new.populate();
+    new.interpret(String::from("main"));
+    let mut hash: HashMap<String,Vec<String>> = HashMap::new();
+    hash.insert(String::from("main"),vec![String::from("0")]);
+    hash.insert(String::from("other"),Vec::new());
+    let (mem, _) = new.ret();
+    assert_eq!(hash,mem);
+}
+#[test]
+fn test_swaps_backwards() {
+    let mut new = Ob::new(String::from("# main 0. other spawn 0 main other <= .0"));
+    new.populate();
+    new.interpret(String::from("main"));
+    let mut hash: HashMap<String,Vec<String>> = HashMap::new();
+    hash.insert(String::from("main"),vec![String::from("0")]);
+    hash.insert(String::from("other"),Vec::new());
+    let (mem, _) = new.ret();
+    assert_eq!(hash,mem);
+}
+
+
+#[test]
+fn test_comparators() {
+    let mut new = Ob::new(String::from("# main 0. 0 1 < .0"));
+    new.populate();
+    new.interpret(String::from("main"));
+    let mut hash: HashMap<String,Vec<String>> = HashMap::new();
+    hash.insert(String::from("main"),vec![String::from("yea")]);
+    let (mem,_) = new.ret();
+    assert_eq!(hash,mem);
+}
+
+#[test]
+fn test_comparators_with_strings() {
+    let mut new = Ob::new(String::from("# main 0. balls 1 < .0"));
+    new.populate();
+    new.interpret(String::from("main"));
+    let mut hash: HashMap<String,Vec<String>> = HashMap::new();
+    hash.insert(String::from("main"),vec![String::from("nope")]);
+    let (mem,_) = new.ret();
+    assert_eq!(hash,mem);
+}
+
+#[test]
+fn test_comparators_with_strings_once_more() {
+    let mut new = Ob::new(String::from("# main 0. 1 balls < .0"));
+    new.populate();
+    new.interpret(String::from("main"));
+    let mut hash: HashMap<String,Vec<String>> = HashMap::new();
+    hash.insert(String::from("main"),vec![String::from("yea")]);
+    let (mem,_) = new.ret();
+    assert_eq!(hash,mem);
+}
+
+#[test]
+fn naming_tests_is_hard() {
+    let mut new = Ob::new(String::from("# main 0. 1 balls > .0"));
+    new.populate();
+    new.interpret(String::from("main"));
+    let mut hash: HashMap<String,Vec<String>> = HashMap::new();
+    hash.insert(String::from("main"),vec![String::from("nope")]);
+    let (mem,_) = new.ret();
+    assert_eq!(hash,mem);
 }
