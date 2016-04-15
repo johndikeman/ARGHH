@@ -121,6 +121,21 @@ impl Ob {
                             // doing some shady shit with short circuiting here nbd
                             if (res != None && self.memory.get_mut(&current_memory).unwrap().pop().unwrap() == "yea") || res == None  {
                                 match &*current_operator {
+                                    "inc" => {
+                                            let file = String::from(self.memory.get_mut(&current_memory).unwrap().pop().unwrap());
+                                            let mut file = File::open(&file).expect(&*format!("error: couldn't import the file {:?}",file));
+                                            let mut contents = String::new();
+                                            file.read_to_string(&mut contents)
+                                                .expect("couldn't read the file");
+                                            let mut metainterpreter = Ob::new(contents);
+                                            // change this line if you want/don't want debug messages!
+                                            metainterpreter.set_verbosity(self.verbose);
+                                            metainterpreter.set(self.memory.clone(),self.functions.clone());
+                                            metainterpreter.populate();
+                                            let (n,o) = metainterpreter.ret();
+                                            self.set(n,o);
+                                    },
+
                                     "!!" => {
                                         let method = String::from(self.memory.get_mut(&current_memory).unwrap().pop().unwrap());
                                         let mut metainterpreter = Ob::new(String::new());
