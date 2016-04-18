@@ -4,11 +4,27 @@ use std::io::prelude::*;
 use std::fs::File;
 use std::collections::HashMap;
 use std::io;
+use std::env;
 // use std::str::Chars;
 
 
 fn main() {
-    let mut file = File::open("test.step")
+    let mut args = env::args();
+    // skip to the next command line argument becuase the first is the program itself
+    args.next();
+    let filepath: &str = &*args.next().unwrap();
+    let mut verbose = false;
+    // check if there are any more arguments
+    match args.next() {
+        Some(x) => {
+            if x == "-v"{
+                verbose = true
+            }
+        }
+        _ => ()
+    }
+    println!("{}",filepath);
+    let mut file = File::open(filepath)
         .expect("couldn't open file");
     // println!("here now!");
     let mut s = String::new();
@@ -19,7 +35,7 @@ fn main() {
     // self.functions[function_name] is a vector of string literals, not Strings
     let mut interpreter = Ob::new(s);
     // change this line if you want/don't want debug messages!
-    interpreter.set_verbosity(false);
+    interpreter.set_verbosity(verbose);
     interpreter.populate();
     interpreter.interpret(String::from("main"));
 

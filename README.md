@@ -3,10 +3,17 @@ ARGHH [![Build Status](https://travis-ci.org/microwaveabletoaster/ARGHH.svg?bran
 
 ARGHH stands for ARGHH: A Rustic Step Implementation. it's an recursive onomatopoeic backronym, because it's the noise that you make when you read what it stands for.
 
+INSTALLATION
+============
+right now you've got no choice but to compile it yourself- but have no fear, Rust is easy! just download and install the language from [here](https://www.rust-lang.org/downloads.html), clone this repo, then `cd` into the directory you cloned into and compile it with `cargo build`. your freshly baked binary should be in `target/debug/`.
+run your ARGHH code with `ARGHH path-to-file`. if you would like verbosity (it helps with debugging) then run `ARGHH path-to-file -v`. that's all there is to it.
+
+
+
 GETTING STARTED WITH ARGHH
 ==========================
 ### sike! it's time for a history lesson
-a little while ago, I wrote [STEP](https://github.com/microwaveabletoaster/STEPlang). It's functional, but it never really reached the point that I wanted it to. Recently I decided to pick the project back up, but instead of working with the code that I already had, I decided to just write the whole darn thing again- but this time, in Rust- a fast, safe systems programming language that the nerds at Mozilla built. 
+a little while ago, I wrote [STEP](https://github.com/microwaveabletoaster/STEPlang). It's functional, but it never really reached the point that I wanted it to. Recently I decided to pick the project back up, but instead of working with the code that I already had, I decided to just write the whole darn thing again- but this time, in Rust- a fast, safe systems programming language that the nerds at Mozilla built.
 
 ### okay here we go
 
@@ -35,7 +42,7 @@ the secret sauce that makes ARGHH tick. sidenote: I wrote a programming language
 ### +
 This is called a frightened starfish, and it adds the top two numbers on the stack together. It will cry if you try to use it with strings, but support for that is planned.
 
-### - 
+### -
 This is called a half-worm, and it will subtract the top thing on the stack from the second to top thing on the stack.
 
 ### /
@@ -44,7 +51,7 @@ This is called a confused tree, and it will divide the second to top thing on th
 ### *
 This is called a butthole, and it will multiply the top two things on the stack.
 
-### % 
+### %
 This is called a disappointment, and it will find the remainder of the second to top thing on the stack divided by the top thing on the stack.
 
 ### output
@@ -138,12 +145,10 @@ ROADMAP
 
 :white_medium_square: string operations
 
-:white_medium_square: importing files
+:white_check_mark: importing files
 
 :white_check_mark: methods
 
-:white_medium_square: tests
-
-:white_medium_square: kind types:kissing_heart:
+:white_check_mark: tests
 
 :white_medium_square: finish the documentation
